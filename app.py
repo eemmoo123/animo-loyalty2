@@ -25,95 +25,138 @@ def clean_phone(phone_str):
 
 df = load_data()
 
-# Custom French-Café Styling (CSS)
+# Custom French-Café Bright & Luxury Styling (CSS)
 st.markdown("""
     <style>
-    .main {
-        background-color: #12100e;
-        color: #f7f2eb;
-    }
     .stApp {
-        background-color: #12100e;
+        background-color: #FAF6F0;
+        color: #2C221E;
+        font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    }
+    .brand-subtitle {
+        font-size: 13px;
+        color: #8C7B6E;
+        letter-spacing: 4px;
+        margin-top: 5px;
+        text-transform: uppercase;
+        text-align: center;
     }
     .card-container {
-        background-color: #f7f2eb;
-        color: #2c221e;
-        padding: 30px;
-        border-radius: 20px;
-        box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        background: linear-gradient(145deg, #FFFFFF, #F5EFEB);
+        color: #2C221E;
+        padding: 35px;
+        border-radius: 24px;
+        box-shadow: 0 12px 35px rgba(44, 34, 30, 0.08);
+        border: 1px solid #E6DCD0;
         text-align: center;
-        font-family: serif;
-        margin-top: 20px;
+        margin-top: 25px;
     }
     .card-title {
-        font-size: 28px;
+        font-size: 26px;
         font-weight: bold;
-        color: #2c221e;
-        margin-bottom: 5px;
+        color: #223322;
+        margin-bottom: 2px;
+        font-family: serif;
     }
     .card-subtitle {
-        font-size: 14px;
-        color: #7c6f64;
+        font-size: 12px;
+        color: #9C8B7E;
         letter-spacing: 2px;
-        margin-bottom: 20px;
+        margin-bottom: 25px;
     }
     .rule-text {
-        font-size: 18px;
-        font-weight: bold;
-        color: #3b5336;
-        margin-bottom: 5px;
+        font-size: 17px;
+        font-weight: 700;
+        color: #3B5336;
+        margin-bottom: 2px;
     }
     .rule-sub {
-        font-size: 12px;
-        color: #8c7b6e;
+        font-size: 11px;
+        color: #9C8B7E;
         margin-bottom: 25px;
     }
     .stamps-grid {
         display: flex;
         justify-content: center;
-        gap: 10px;
+        gap: 12px;
         flex-wrap: wrap;
         margin-bottom: 25px;
     }
     .stamp-circle {
-        width: 45px;
-        height: 45px;
+        width: 50px;
+        height: 50px;
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 18px;
+        font-size: 20px;
+        transition: all 0.3s ease;
     }
     .stamp-active {
-        background-color: #3b5336;
-        color: #f7f2eb;
-        box-shadow: 0 4px 10px rgba(59,83,54,0.3);
+        background: linear-gradient(135deg, #3B5336, #223322);
+        color: #FAF6F0;
+        box-shadow: 0 6px 15px rgba(59, 83, 54, 0.25);
     }
     .stamp-inactive {
-        background-color: #ede4d8;
-        border: 2px dashed #bfaea0;
-        color: #bfaea0;
+        background-color: #F0EAE1;
+        border: 2px dashed #D4C5B9;
+        color: #D4C5B9;
     }
     .footer-msg {
-        font-size: 16px;
-        font-weight: bold;
-        color: #2c221e;
+        font-size: 15px;
+        font-weight: 600;
+        color: #2C221E;
         margin-top: 15px;
+    }
+    .stTextInput input, .stSelectbox select {
+        background-color: #FFFFFF !important;
+        border: 1px solid #D4C5B9 !important;
+        border-radius: 12px !important;
+        color: #2C221E !important;
+    }
+    .stButton button {
+        background-color: #3B5336 !important;
+        color: #FAF6F0 !important;
+        border-radius: 12px !important;
+        border: none !important;
+        font-weight: 600 !important;
+        padding: 0.5rem 1rem !important;
+        box-shadow: 0 4px 12px rgba(59, 83, 54, 0.2);
+    }
+    .stButton button:hover {
+        background-color: #223322 !important;
     }
     </style>
 """, unsafe_allow_html=True)
 
-# Header Branding
-st.markdown("<h1 style='text-align: center; color: #f7f2eb; font-family: serif;'>Animo Bakery & Cafe</h1>", unsafe_allow_html=True)
-st.markdown("<p style='text-align: center; color: #bfaea0; letter-spacing: 3px;'>EXPERIENCE THE TASTE OF FRANCE</p>", unsafe_allow_html=True)
+# Header Branding with Dynamic Logo Detection
+col_l, col_m, col_r = st.columns([1, 2, 1])
+with col_m:
+    logo_path = None
+    for filename in ["logo.png", "logo.jpeg", "logo.jpg"]:
+        if os.path.exists(filename):
+            logo_path = filename
+            break
+            
+    if logo_path:
+        st.image(logo_path, use_column_width=True)
+    else:
+        st.markdown("<h1 style='text-align: center; color: #223322; font-family: serif;'>Animo Bakery & Cafe</h1>", unsafe_allow_html=True)
 
-mode = st.radio("اختر واجهة الاستخدام:", ["🪪 بطاقة العميل (استعراض الأختام)", "👨‍🍳 لوحة الكاشير (محمية بكلمة مرور)"], horizontal=True)
+st.markdown("<div class='brand-subtitle'>Experience The Taste of France</div>", unsafe_allow_html=True)
+st.markdown("---")
 
-if mode == "🪪 بطاقة العميل (استعراض الأختام)":
-    st.markdown("### استعراض بطاقة الولاء الخاصة بك")
-    customer_phone = st.text_input("أدخل رقم جوالك (مثال: 05xxxxxxxx)")
+mode = st.radio("اختر واجهة الاستخدام:", ["✨ بطاقة العميل الذكية", "🔐 لوحة تحكم الكاشير"], horizontal=True)
+
+if mode == "✨ بطاقة العميل الذكية":
+    st.markdown("<h4 style='color: #223322; text-align: center; font-family: serif;'>استعرض بطاقة الولاء الخاصة بك</h4>", unsafe_allow_html=True)
+    customer_phone = st.text_input("رقم الجوال (مثال: 05xxxxxxxx)", placeholder="أدخل رقم جوالك هنا...")
     
-    if st.button("عرض البطاقة الفاخرة"):
+    col1, col2, col3 = st.columns([1, 2, 1])
+    with col2:
+        search_btn = st.button("عرض البطاقة الفاخرة", use_container_width=True)
+    
+    if search_btn:
         if customer_phone:
             cleaned_input = clean_phone(customer_phone)
             matched_idx = -1
@@ -128,7 +171,6 @@ if mode == "🪪 بطاقة العميل (استعراض الأختام)":
                 free_earned = int(cust['FreeCoffeesEarned'])
                 remaining = 7 - punches
                 
-                # بناء دوائر الأختام (7 أختام)
                 stamps_html = "<div class='stamps-grid'>"
                 for i in range(1, 8):
                     if i <= punches:
@@ -137,12 +179,11 @@ if mode == "🪪 بطاقة العميل (استعراض الأختام)":
                         stamps_html += "<div class='stamp-circle stamp-inactive'>☕</div>"
                 stamps_html += "</div>"
                 
-                # بطاقة العميل بتصميم فرنسي أنيق
                 card_html = f"""
                 <div class='card-container'>
-                    <div style='font-size: 14px; color: #7c6f64; margin-bottom: 5px;'>مرحباً بك، {cust['Name']}</div>
-                    <div class='card-title'>بطاقة الولاء</div>
-                    <div class='card-subtitle'>LOYALTY CARD</div>
+                    <div style='font-size: 13px; color: #8C7B6E; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 1px;'>Welcome, {cust['Name']}</div>
+                    <div class='card-title'>بطاقة الولاء الرقمية</div>
+                    <div class='card-subtitle'>DIGITAL LOYALTY CARD</div>
                     
                     <div class='rule-text'>سبعة أختام، والكوب الثامن علينا</div>
                     <div class='rule-sub'>Seven stamps. Eighth cup, on us.</div>
@@ -152,7 +193,7 @@ if mode == "🪪 بطاقة العميل (استعراض الأختام)":
                     <div class='footer-msg'>
                         {f"بقي لك {remaining} أختام فقط لكوبك المجاني" if remaining > 0 else "🎉 مبروك! استحقيت كوباً مجانياً الآن!"}
                     </div>
-                    <div style='font-size: 13px; color: #7c6f64; margin-top: 10px;'>الأكواب المجانية المكتسبة: {free_earned}</div>
+                    <div style='font-size: 12px; color: #8C7B6E; margin-top: 12px;'>الأكواب المجانية المكتسبة: <b style='color: #3B5336;'>{free_earned}</b></div>
                 </div>
                 """
                 st.markdown(card_html, unsafe_allow_html=True)
@@ -165,8 +206,8 @@ if mode == "🪪 بطاقة العميل (استعراض الأختام)":
             st.error("الرجاء إدخال رقم الجوال.")
 
 else:
-    st.markdown("### تسجيل دخول الكاشير")
-    pass_input = st.text_input("أدخل رمز المرور الخاص بالكاشير", type="password")
+    st.markdown("<h4 style='color: #223322; font-family: serif;'>تسجيل دخول الكاشير</h4>", unsafe_allow_html=True)
+    pass_input = st.text_input("أدخل رمز المرور الخاص بالكاشير", type="password", placeholder="••••")
     
     if pass_input == CASHIER_PIN:
         st.success("تم تسجيل الدخول بنجاح للمنطقة الإدارية.")
