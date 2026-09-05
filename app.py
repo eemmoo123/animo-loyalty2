@@ -41,11 +41,18 @@ st.markdown("""
         margin-top: 5px;
         text-transform: uppercase;
         text-align: center;
+        margin-bottom: 20px;
     }
-    .stRadio label {
+    .stRadio > label {
         color: #223322 !important;
-        font-weight: 600 !important;
-        font-size: 16px !important;
+        font-weight: 700 !important;
+        font-size: 17px !important;
+    }
+    .stRadio div[role="radiogroup"] {
+        background-color: #F0EAE1;
+        padding: 10px 20px;
+        border-radius: 14px;
+        border: 1px solid #D4C5B9;
     }
     .stTextInput label, .stSelectbox label {
         color: #2C221E !important;
@@ -140,7 +147,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # Header Branding with Logo
-col_l, col_m, col_r = st.columns([1, 2, 1])
+col_l, col_m, col_r = st.columns([1, 1.2, 1])
 with col_m:
     if os.path.exists(LOGO_FILE):
         st.image(LOGO_FILE, use_container_width=True)
@@ -150,7 +157,9 @@ with col_m:
 st.markdown("<div class='brand-subtitle'>Experience The Taste of France</div>", unsafe_allow_html=True)
 st.markdown("---")
 
+# Main Interface Switcher
 mode = st.radio("اختر واجهة الاستخدام:", ["✨ بطاقة العميل الذكية", "🔐 لوحة تحكم الكاشير"], horizontal=True)
+st.markdown("<div style='margin-bottom: 20px;'></div>", unsafe_allow_html=True)
 
 if mode == "✨ بطاقة العميل الذكية":
     st.markdown("<h4 style='color: #223322; text-align: center; font-family: serif;'>استعرض بطاقة الولاء الخاصة بك</h4>", unsafe_allow_html=True)
