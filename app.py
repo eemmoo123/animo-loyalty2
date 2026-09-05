@@ -6,6 +6,7 @@ import os
 st.set_page_config(page_title="Animo - Loyalty Card", page_icon="☕", layout="centered")
 
 DB_FILE = "animo_customers.csv"
+LOGO_FILE = "logo.jpeg"
 CASHIER_PIN = "1234"  # رمز مرور الكاشير
 
 def load_data():
@@ -40,6 +41,15 @@ st.markdown("""
         margin-top: 5px;
         text-transform: uppercase;
         text-align: center;
+    }
+    .stRadio label {
+        color: #223322 !important;
+        font-weight: 600 !important;
+        font-size: 16px !important;
+    }
+    .stTextInput label, .stSelectbox label {
+        color: #2C221E !important;
+        font-weight: 600 !important;
     }
     .card-container {
         background: linear-gradient(145deg, #FFFFFF, #F5EFEB);
@@ -129,17 +139,11 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# Header Branding with Dynamic Logo Detection
+# Header Branding with Logo
 col_l, col_m, col_r = st.columns([1, 2, 1])
 with col_m:
-    logo_path = None
-    for filename in ["logo.png", "logo.jpeg", "logo.jpg"]:
-        if os.path.exists(filename):
-            logo_path = filename
-            break
-            
-    if logo_path:
-        st.image(logo_path, use_column_width=True)
+    if os.path.exists(LOGO_FILE):
+        st.image(LOGO_FILE, use_column_width=True)
     else:
         st.markdown("<h1 style='text-align: center; color: #223322; font-family: serif;'>Animo Bakery & Cafe</h1>", unsafe_allow_html=True)
 
