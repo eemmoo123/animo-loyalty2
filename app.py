@@ -43,6 +43,7 @@ st.markdown("""
         text-align: center;
         margin-bottom: 20px;
     }
+    /* تعديل لون ووضوح خيارات الواجهة (بطاقة العميل وكاشير) لتصبح بالأخضر الغامق الواضح */
     .stRadio > label {
         color: #223322 !important;
         font-weight: 700 !important;
@@ -53,6 +54,11 @@ st.markdown("""
         padding: 10px 20px;
         border-radius: 14px;
         border: 1px solid #D4C5B9;
+    }
+    .stRadio div[role="radiogroup"] label p {
+        color: #223322 !important;
+        font-weight: 700 !important;
+        font-size: 16px !important;
     }
     .stTextInput label, .stSelectbox label {
         color: #2C221E !important;
