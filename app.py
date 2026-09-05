@@ -3,7 +3,7 @@ import pandas as pd
 import os
 
 # Page configuration
-st.set_page_config(page_title="Animo Loyalty Card", page_icon="☕", layout="centered")
+st.set_page_config(page_title="Animo - Loyalty Card", page_icon="☕", layout="centered")
 
 DB_FILE = "animo_customers.csv"
 CASHIER_PIN = "1234"  # رمز مرور الكاشير
@@ -11,7 +11,6 @@ CASHIER_PIN = "1234"  # رمز مرور الكاشير
 def load_data():
     if os.path.exists(DB_FILE):
         df = pd.read_csv(DB_FILE)
-        # ضمان قراءة أرقام الجوال كنصوص دائماً لتجنب مشاكل التنسيق
         df["Phone"] = df["Phone"].astype(str).str.strip()
         return df
     else:
@@ -21,27 +20,102 @@ def save_data(df):
     df.to_csv(DB_FILE, index=False)
 
 def clean_phone(phone_str):
-    # إزالة أي مسافات أو رموز غير صالحة وتوحيد تنسيق الرقم
     phone = "".join(filter(str.isdigit, str(phone_str)))
-    # إزالة الصفر البادئ إن وجد للمقارنة المرنة، أو التعامل معه بثبات
     return phone.lstrip('0')
 
 df = load_data()
 
-st.title("☕ Animo Coffee - Digital Loyalty Card")
-st.markdown("نظام ولاء مقهى أنيمو: **كل 7 أكواب قهوة، الكوب الثامن مجاناً!**")
+# Custom French-Café Styling (CSS)
+st.markdown("""
+    <style>
+    .main {
+        background-color: #12100e;
+        color: #f7f2eb;
+    }
+    .stApp {
+        background-color: #12100e;
+    }
+    .card-container {
+        background-color: #f7f2eb;
+        color: #2c221e;
+        padding: 30px;
+        border-radius: 20px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        text-align: center;
+        font-family: serif;
+        margin-top: 20px;
+    }
+    .card-title {
+        font-size: 28px;
+        font-weight: bold;
+        color: #2c221e;
+        margin-bottom: 5px;
+    }
+    .card-subtitle {
+        font-size: 14px;
+        color: #7c6f64;
+        letter-spacing: 2px;
+        margin-bottom: 20px;
+    }
+    .rule-text {
+        font-size: 18px;
+        font-weight: bold;
+        color: #3b5336;
+        margin-bottom: 5px;
+    }
+    .rule-sub {
+        font-size: 12px;
+        color: #8c7b6e;
+        margin-bottom: 25px;
+    }
+    .stamps-grid {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-bottom: 25px;
+    }
+    .stamp-circle {
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+    }
+    .stamp-active {
+        background-color: #3b5336;
+        color: #f7f2eb;
+        box-shadow: 0 4px 10px rgba(59,83,54,0.3);
+    }
+    .stamp-inactive {
+        background-color: #ede4d8;
+        border: 2px dashed #bfaea0;
+        color: #bfaea0;
+    }
+    .footer-msg {
+        font-size: 16px;
+        font-weight: bold;
+        color: #2c221e;
+        margin-top: 15px;
+    }
+    </style>
+""", unsafe_allow_html=True)
 
-mode = st.radio("اختر واجهة الاستخدام:", ["🪪 بطاقة العميل (استعراض الأختام)", "👨‍🍳 لوحة الكاشير (محمية بكلمة مرور)"])
+# Header Branding
+st.markdown("<h1 style='text-align: center; color: #f7f2eb; font-family: serif;'>Animo Bakery & Cafe</h1>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center; color: #bfaea0; letter-spacing: 3px;'>EXPERIENCE THE TASTE OF FRANCE</p>", unsafe_allow_html=True)
+
+mode = st.radio("اختر واجهة الاستخدام:", ["🪪 بطاقة العميل (استعراض الأختام)", "👨‍🍳 لوحة الكاشير (محمية بكلمة مرور)"], horizontal=True)
 
 if mode == "🪪 بطاقة العميل (استعراض الأختام)":
-    st.subheader("أهلاً بك! أدخل رقم جوالك لاستعراض بطاقتك")
-    customer_phone = st.text_input("رقم الجوال (مثال: 05xxxxxxxx أو الرقم مباشرة)")
+    st.markdown("### استعراض بطاقة الولاء الخاصة بك")
+    customer_phone = st.text_input("أدخل رقم جوالك (مثال: 05xxxxxxxx)")
     
-    if st.button("عرض البطاقة"):
+    if st.button("عرض البطاقة الفاخرة"):
         if customer_phone:
             cleaned_input = clean_phone(customer_phone)
-            
-            # البحث بمرونة بغض النظر عن وجود الصفر من عدمه
             matched_idx = -1
             for idx, row in df.iterrows():
                 if clean_phone(row["Phone"]) == cleaned_input:
@@ -50,30 +124,48 @@ if mode == "🪪 بطاقة العميل (استعراض الأختام)":
             
             if matched_idx != -1:
                 cust = df.iloc[matched_idx]
-                st.success(f"مرحباً بك يا {cust['Name']}!")
+                punches = int(cust['Punches'])
+                free_earned = int(cust['FreeCoffeesEarned'])
+                remaining = 7 - punches
                 
-                st.markdown("---")
-                st.subheader("🎫 بطاقة الولاء الخاصة بك")
-                st.write(f"**عدد الأختام الحالية:** {cust['Punches']} من 7")
+                # بناء دوائر الأختام (7 أختام)
+                stamps_html = "<div class='stamps-grid'>"
+                for i in range(1, 8):
+                    if i <= punches:
+                        stamps_html += "<div class='stamp-circle stamp-active'>☕</div>"
+                    else:
+                        stamps_html += "<div class='stamp-circle stamp-inactive'>☕</div>"
+                stamps_html += "</div>"
                 
-                progress = min(int(cust['Punches']) / 7.0, 1.0)
-                st.progress(progress)
+                # بطاقة العميل بتصميم فرنسي أنيق
+                card_html = f"""
+                <div class='card-container'>
+                    <div style='font-size: 14px; color: #7c6f64; margin-bottom: 5px;'>مرحباً بك، {cust['Name']}</div>
+                    <div class='card-title'>بطاقة الولاء</div>
+                    <div class='card-subtitle'>LOYALTY CARD</div>
+                    
+                    <div class='rule-text'>سبعة أختام، والكوب الثامن علينا</div>
+                    <div class='rule-sub'>Seven stamps. Eighth cup, on us.</div>
+                    
+                    {stamps_html}
+                    
+                    <div class='footer-msg'>
+                        {f"بقي لك {remaining} أختام فقط لكوبك المجاني" if remaining > 0 else "🎉 مبروك! استحقيت كوباً مجانياً الآن!"}
+                    </div>
+                    <div style='font-size: 13px; color: #7c6f64; margin-top: 10px;'>الأكواب المجانية المكتسبة: {free_earned}</div>
+                </div>
+                """
+                st.markdown(card_html, unsafe_allow_html=True)
                 
-                if int(cust['Punches']) < 7:
-                    st.info(f"متبقي لك {7 - int(cust['Punches'])} أكواب لتصل إلى الكوب المجاني!")
-                else:
+                if punches >= 7:
                     st.balloons()
-                    st.success("🎉 مبروك! لقد أكملت 7 أكواب ولديك كوب قهوة مجاني مستحق!")
-                
-                st.write(f"🎁 **الأكواب المجانية المكتسبة حتى الآن:** {cust['FreeCoffeesEarned']}")
-                st.markdown("---")
             else:
                 st.warning("رقم الجوال غير مسجل. يرجى الطلب من الكاشير تسجيلك في البرنامج أول مرة.")
         else:
             st.error("الرجاء إدخال رقم الجوال.")
 
 else:
-    st.subheader("تسجيل دخول الكاشير")
+    st.markdown("### تسجيل دخول الكاشير")
     pass_input = st.text_input("أدخل رمز المرور الخاص بالكاشير", type="password")
     
     if pass_input == CASHIER_PIN:
@@ -84,11 +176,10 @@ else:
             with st.form("new_cust"):
                 name = st.text_input("اسم العميل")
                 phone = st.text_input("رقم الجوال")
-                submitted = st.form_submit_button("حفظ وتسجيل")
+                submitted = st.form_submit_button("حفظ وتسجيل العميل")
                 if submitted:
                     if name and phone:
                         cleaned_new_phone = clean_phone(phone)
-                        # التحقق هل الرقم موجود مسبقاً بطريقة مرنة
                         exists = any(clean_phone(p) == cleaned_new_phone for p in df["Phone"])
                         if exists:
                             st.warning("هذا الرقم مسجل مسبقاً.")
@@ -116,7 +207,7 @@ else:
                         df.at[idx, "Punches"] = 0
                         df.at[idx, "FreeCoffeesEarned"] = int(df.at[idx, "FreeCoffeesEarned"]) + 1
                         st.balloons()
-                        st.success("🎉 أكمل العميل 7 أكواب واستحق الكوب المجاني!")
+                        st.success("🎉 أكمل العميل 7 أختام واستحق الكوب المجاني!")
                     else:
                         df.at[idx, "Punches"] = current
                         st.success(f"تم إضافة الختم بنجاح! الإجمالي الآن: {current}/7")
