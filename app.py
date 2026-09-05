@@ -43,7 +43,6 @@ st.markdown("""
         text-align: center;
         margin-bottom: 20px;
     }
-    /* تعديل لون ووضوح خيارات الواجهة (بطاقة العميل وكاشير) لتصبح بالأخضر الغامق الواضح */
     .stRadio > label {
         color: #223322 !important;
         font-weight: 700 !important;
@@ -198,7 +197,8 @@ if mode == "✨ بطاقة العميل الذكية":
                         stamps_html += "<div class='stamp-circle stamp-inactive'>☕</div>"
                 stamps_html += "</div>"
                 
-                card_html = f"""
+                # عرض عناصر البطاقة بشكل مفصول ومنظم لضمان قراءة الـ HTML وتجنب ظهور الأكواد الخام
+                st.markdown(f"""
                 <div class='card-container'>
                     <div style='font-size: 13px; color: #8C7B6E; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 1px;'>Welcome, {cust['Name']}</div>
                     <div class='card-title'>بطاقة الولاء الرقمية</div>
@@ -210,12 +210,11 @@ if mode == "✨ بطاقة العميل الذكية":
                     {stamps_html}
                     
                     <div class='footer-msg'>
-                        {f"بقي لك {remaining} أختام فقط لكوبك المجاني" if remaining > 0 else "🎉 مبروك! استحقيت كوباً مجانياً الآن!"}
+                        {"بقي لك " + str(remaining) + " أختام فقط لكوبك المجاني" if remaining > 0 else "🎉 مبروك! استحقيت كوباً مجانياً الآن!"}
                     </div>
                     <div style='font-size: 12px; color: #8C7B6E; margin-top: 12px;'>الأكواب المجانية المكتسبة: <b style='color: #3B5336;'>{free_earned}</b></div>
                 </div>
-                """
-                st.markdown(card_html, unsafe_allow_html=True)
+                """, unsafe_allow_html=True)
                 
                 if punches >= 7:
                     st.balloons()
