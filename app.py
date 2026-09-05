@@ -32,8 +32,7 @@ if mode == "🪪 بطاقة العميل (استعراض الأختام)":
             matched = df[df["Phone"] == customer_phone]
             if not matched.empty:
                 cust = matched.iloc[0]
-                st.success(مرحباً بك يا {cust['Name']}!)
-                
+                st.success(f"مرحباً بك يا {cust['Name']}!")                
                 # عرض بطاقة الولاء بشكل بصري
                 st.markdown("---")
                 st.subheader("🎫 بطاقة الولاء الخاصة بك")
