@@ -97,38 +97,37 @@ st.markdown("""
         color: #9C8B7E;
         margin-bottom: 25px;
     }
-    .stamps-grid {
-        display: flex;
-        justify-content: center;
-        gap: 12px;
-        flex-wrap: wrap;
-        margin-bottom: 25px;
-    }
-    .stamp-circle {
-        width: 50px;
-        height: 50px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 20px;
-        transition: all 0.3s ease;
-    }
     .stamp-active {
         background: linear-gradient(135deg, #3B5336, #223322);
         color: #FAF6F0;
-        box-shadow: 0 6px 15px rgba(59, 83, 54, 0.25);
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        box-shadow: 0 4px 10px rgba(59, 83, 54, 0.25);
+        margin: 0 4px;
     }
     .stamp-inactive {
         background-color: #F0EAE1;
         border: 2px dashed #D4C5B9;
         color: #D4C5B9;
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        margin: 0 4px;
     }
     .footer-msg {
         font-size: 15px;
         font-weight: 600;
         color: #2C221E;
-        margin-top: 15px;
+        margin-top: 20px;
     }
     .stTextInput input, .stSelectbox select {
         background-color: #FFFFFF !important;
@@ -189,15 +188,14 @@ if mode == "✨ بطاقة العميل الذكية":
                 free_earned = int(cust['FreeCoffeesEarned'])
                 remaining = 7 - punches
                 
-                stamps_html = "<div class='stamps-grid'>"
+                # بناء الأختام بشكل مرئي مباشر لتجنب مشاكل العرض النصي
+                stamps_html_parts = ""
                 for i in range(1, 8):
                     if i <= punches:
-                        stamps_html += "<div class='stamp-circle stamp-active'>☕</div>"
+                        stamps_html_parts += "<div class='stamp-active'>☕</div>"
                     else:
-                        stamps_html += "<div class='stamp-circle stamp-inactive'>☕</div>"
-                stamps_html += "</div>"
-                
-                # عرض عناصر البطاقة بشكل مفصول ومنظم لضمان قراءة الـ HTML وتجنب ظهور الأكواد الخام
+                        stamps_html_parts += "<div class='stamp-inactive'>☕</div>"
+
                 st.markdown(f"""
                 <div class='card-container'>
                     <div style='font-size: 13px; color: #8C7B6E; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 1px;'>Welcome, {cust['Name']}</div>
@@ -207,7 +205,9 @@ if mode == "✨ بطاقة العميل الذكية":
                     <div class='rule-text'>سبعة أختام، والكوب الثامن علينا</div>
                     <div class='rule-sub'>Seven stamps. Eighth cup, on us.</div>
                     
-                    {stamps_html}
+                    <div style='margin: 20px 0;'>
+                        {stamps_html_parts}
+                    </div>
                     
                     <div class='footer-msg'>
                         {"بقي لك " + str(remaining) + " أختام فقط لكوبك المجاني" if remaining > 0 else "🎉 مبروك! استحقيت كوباً مجانياً الآن!"}
