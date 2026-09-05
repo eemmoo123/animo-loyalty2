@@ -143,7 +143,7 @@ st.markdown("""
 col_l, col_m, col_r = st.columns([1, 2, 1])
 with col_m:
     if os.path.exists(LOGO_FILE):
-        st.image(LOGO_FILE, use_column_width=True)
+        st.image(LOGO_FILE, use_container_width=True)
     else:
         st.markdown("<h1 style='text-align: center; color: #223322; font-family: serif;'>Animo Bakery & Cafe</h1>", unsafe_allow_html=True)
 
