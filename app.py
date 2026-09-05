@@ -6,16 +6,25 @@ import os
 st.set_page_config(page_title="Animo Loyalty Card", page_icon="☕", layout="centered")
 
 DB_FILE = "animo_customers.csv"
-CASHIER_PIN = "1234"  # كلمة المرور الخاصة بالكاشير (يمكنك تغييرها هنا)
+CASHIER_PIN = "1234"  # رمز مرور الكاشير
 
 def load_data():
     if os.path.exists(DB_FILE):
-        return pd.read_csv(DB_FILE)
+        df = pd.read_csv(DB_FILE)
+        # ضمان قراءة أرقام الجوال كنصوص دائماً لتجنب مشاكل التنسيق
+        df["Phone"] = df["Phone"].astype(str).str.strip()
+        return df
     else:
         return pd.DataFrame(columns=["Name", "Phone", "Punches", "FreeCoffeesEarned"])
 
 def save_data(df):
     df.to_csv(DB_FILE, index=False)
+
+def clean_phone(phone_str):
+    # إزالة أي مسافات أو رموز غير صالحة وتوحيد تنسيق الرقم
+    phone = "".join(filter(str.isdigit, str(phone_str)))
+    # إزالة الصفر البادئ إن وجد للمقارنة المرنة، أو التعامل معه بثبات
+    return phone.lstrip('0')
 
 df = load_data()
 
@@ -26,24 +35,32 @@ mode = st.radio("اختر واجهة الاستخدام:", ["🪪 بطاقة ا�
 
 if mode == "🪪 بطاقة العميل (استعراض الأختام)":
     st.subheader("أهلاً بك! أدخل رقم جوالك لاستعراض بطاقتك")
-    customer_phone = st.text_input("رقم الجوال (مثال: 05xxxxxxxx)")
+    customer_phone = st.text_input("رقم الجوال (مثال: 05xxxxxxxx أو الرقم مباشرة)")
     
     if st.button("عرض البطاقة"):
         if customer_phone:
-            matched = df[df["Phone"] == customer_phone]
-            if not matched.empty:
-                cust = matched.iloc[0]
+            cleaned_input = clean_phone(customer_phone)
+            
+            # البحث بمرونة بغض النظر عن وجود الصفر من عدمه
+            matched_idx = -1
+            for idx, row in df.iterrows():
+                if clean_phone(row["Phone"]) == cleaned_input:
+                    matched_idx = idx
+                    break
+            
+            if matched_idx != -1:
+                cust = df.iloc[matched_idx]
                 st.success(f"مرحباً بك يا {cust['Name']}!")
                 
                 st.markdown("---")
                 st.subheader("🎫 بطاقة الولاء الخاصة بك")
                 st.write(f"**عدد الأختام الحالية:** {cust['Punches']} من 7")
                 
-                progress = min(cust['Punches'] / 7.0, 1.0)
+                progress = min(int(cust['Punches']) / 7.0, 1.0)
                 st.progress(progress)
                 
-                if cust['Punches'] < 7:
-                    st.info(f"متبقي لك {7 - cust['Punches']} أكواب لتصل إلى الكوب المجاني!")
+                if int(cust['Punches']) < 7:
+                    st.info(f"متبقي لك {7 - int(cust['Punches'])} أكواب لتصل إلى الكوب المجاني!")
                 else:
                     st.balloons()
                     st.success("🎉 مبروك! لقد أكملت 7 أكواب ولديك كوب قهوة مجاني مستحق!")
@@ -70,10 +87,13 @@ else:
                 submitted = st.form_submit_button("حفظ وتسجيل")
                 if submitted:
                     if name and phone:
-                        if phone in df["Phone"].values:
+                        cleaned_new_phone = clean_phone(phone)
+                        # التحقق هل الرقم موجود مسبقاً بطريقة مرنة
+                        exists = any(clean_phone(p) == cleaned_new_phone for p in df["Phone"])
+                        if exists:
                             st.warning("هذا الرقم مسجل مسبقاً.")
                         else:
-                            new_row = {"Name": name, "Phone": phone, "Punches": 0, "FreeCoffeesEarned": 0}
+                            new_row = {"Name": name, "Phone": phone.strip(), "Punches": 0, "FreeCoffeesEarned": 0}
                             df = pd.concat([df, pd.DataFrame([new_row])], ignore_index=True)
                             save_data(df)
                             st.success(f"تم تسجيل العميل {name} بنجاح!")
@@ -91,10 +111,10 @@ else:
                 
                 if st.button("➕ إضافة ختم جديد"):
                     idx = df[df["Phone"] == sel_phone].index[0]
-                    current = df.at[idx, "Punches"] + 1
+                    current = int(df.at[idx, "Punches"]) + 1
                     if current >= 7:
                         df.at[idx, "Punches"] = 0
-                        df.at[idx, "FreeCoffeesEarned"] += 1
+                        df.at[idx, "FreeCoffeesEarned"] = int(df.at[idx, "FreeCoffeesEarned"]) + 1
                         st.balloons()
                         st.success("🎉 أكمل العميل 7 أكواب واستحق الكوب المجاني!")
                     else:
