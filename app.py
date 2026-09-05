@@ -334,24 +334,19 @@ if mode == "✨ بطاقة العميل":
                     else "🎉 مبروك! استحقيت كوباً مجانياً الآن!"
                 )
 
-                st.markdown(
-                    f"""
-                    <div class='card-container'>
-                        <div class='card-welcome'>Welcome, {cust['Name']}</div>
-                        <div class='card-title'>بطاقة الولاء الرقمية</div>
-                        <div class='card-subtitle'>DIGITAL LOYALTY CARD</div>
-
-                        <div class='rule-text'>سبعة أختام، والكوب الثامن علينا</div>
-                        <div class='rule-sub'>Seven stamps. Eighth cup, on us.</div>
-
-                        <div class='stamp-row'>{stamps_html}</div>
-
-                        <div class='footer-msg'>{footer}</div>
-                        <div class='footer-note'>الأكواب المجانية المكتسبة: <b>{free_earned}</b></div>
-                    </div>
-                    """,
-                    unsafe_allow_html=True,
+                card_html = (
+                    "<div class='card-container'>"
+                    f"<div class='card-welcome'>Welcome, {cust['Name']}</div>"
+                    "<div class='card-title'>بطاقة الولاء الرقمية</div>"
+                    "<div class='card-subtitle'>DIGITAL LOYALTY CARD</div>"
+                    "<div class='rule-text'>سبعة أختام، والكوب الثامن علينا</div>"
+                    "<div class='rule-sub'>Seven stamps. Eighth cup, on us.</div>"
+                    f"<div class='stamp-row'>{stamps_html}</div>"
+                    f"<div class='footer-msg'>{footer}</div>"
+                    f"<div class='footer-note'>الأكواب المجانية المكتسبة: <b>{free_earned}</b></div>"
+                    "</div>"
                 )
+                st.markdown(card_html, unsafe_allow_html=True)
 
                 if punches >= TOTAL_STAMPS:
                     st.balloons()
