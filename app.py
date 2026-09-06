@@ -205,15 +205,16 @@ st.markdown(
         margin: 10px 0;
     }
     
-    /* ---------- Inputs & Buttons ---------- */
-    .stTextInput label, .stSelectbox label {
+    /* ---------- Inputs & Labels ---------- */
+    section[data-testid="stSidebar"] .stTextInput label {
         color: #FAF6F0 !important;
         font-weight: 700 !important;
         font-size: 15px !important;
     }
-    /* حقول الإدخال في الصفحة الرئيسية */
-    .block-container .stTextInput label {
+    .block-container .stTextInput label, .block-container .stSelectbox label {
         color: #223322 !important;
+        font-weight: 700 !important;
+        font-size: 15px !important;
     }
     .stTextInput input, .stSelectbox div[data-baseweb="select"] > div {
         background-color: #FFFFFF !important;
@@ -224,20 +225,29 @@ st.markdown(
     }
     input[inputmode="numeric"], input[type="tel"] { direction: ltr; text-align: right; }
     
-    .stButton button {
+    /* ---------- Buttons & Form Submit Buttons Fix ---------- */
+    .stButton button, 
+    div[data-testid="stFormSubmitButton"] button {
         background-color: #223322 !important;
         color: #FAF6F0 !important;
         border-radius: 12px !important;
         border: none !important;
         font-weight: 700 !important;
         padding: 0.6rem 1.2rem !important;
-        box-shadow: 0 6px 16px rgba(34, 51, 34, 0.25);
-        transition: all .15s ease;
+        box-shadow: 0 6px 16px rgba(34, 51, 34, 0.25) !important;
+        transition: all .15s ease !important;
     }
-    .stButton button:hover {
+    .stButton button *, 
+    div[data-testid="stFormSubmitButton"] button * {
+        color: #FAF6F0 !important;
+        font-weight: 700 !important;
+    }
+    .stButton button:hover, 
+    div[data-testid="stFormSubmitButton"] button:hover {
         background-color: #3B5336 !important;
         transform: translateY(-1px);
     }
+    
     .cashier-badge {
         display: inline-block;
         background-color: #223322;
