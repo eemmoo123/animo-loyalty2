@@ -325,14 +325,21 @@ if not st.session_state.cashier_auth:
         else:
             idx = find_customer_index(df, customer_phone)
             if idx == -1:
-                st.warning("رقم الجوال غير مسجل. اطلب من الكاشير تسجيلك في البرنامج.")
+                st.markdown(
+                    """
+                    <div style='background-color: #FDF3F2; border: 1.5px solid #D98880; color: #78281F; padding: 14px 18px; border-radius: 14px; text-align: center; font-weight: 700; margin-top: 18px; box-shadow: 0 4px 12px rgba(120,40,31,0.08); font-size: 15px;'>
+                        ⚠️ رقم الجوال غير مسجل. اطلب من الكاشير تسجيلك في البرنامج.
+                    </div>
+                    """,
+                    unsafe_allow_html=True
+                )
             else:
                 cust = df.loc[idx]
                 visits = int(cust["Visits"])
                 tier_name, discount, color, emoji = get_customer_tier(visits)
                 remaining_to_max = max(MAX_MONTHLY_VISITS - visits, 0)
 
-                # رسم التقدم الشهري (الأختام حتى 10) - تم التصحيح هنا
+                # رسم التقدم الشهري (الأختام حتى 10)
                 stamps_html = "".join(
                     f"<div style='background: {color}; color: #fff; width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 14px; box-shadow: 0 3px 8px rgba(0,0,0,0.15);'>{i}</div>"
                     if i <= visits else 
