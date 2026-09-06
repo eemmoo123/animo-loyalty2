@@ -332,7 +332,7 @@ if not st.session_state.cashier_auth:
                 tier_name, discount, color, emoji = get_customer_tier(visits)
                 remaining_to_max = max(MAX_MONTHLY_VISITS - visits, 0)
 
-                # رسم التقدم الشهري (الأختام حتى 10)
+                # رسم التقدم الشهري (الأختام حتى 10) - تم التصحيح هنا
                 stamps_html = "".join(
                     f"<div style='background: {color}; color: #fff; width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 14px; box-shadow: 0 3px 8px rgba(0,0,0,0.15);'>{i}</div>"
                     if i <= visits else 
