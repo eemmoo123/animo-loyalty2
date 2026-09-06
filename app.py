@@ -115,6 +115,18 @@ st.markdown(
 
     .block-container { max-width: 560px; padding-top: 1.5rem; }
 
+    /* إصلاح مشكلة الخط الوهمي عند إغلاق/طي السايدبار */
+    section[data-testid="stSidebar"] {
+        background-color: #223322;
+        color: #FAF6F0;
+    }
+    section[data-testid="stSidebar"][aria-expanded="false"] {
+        margin-left: -1rem;
+    }
+    section[data-testid="stSidebar"][aria-expanded="false"] div[data-testid="stSidebarContent"] {
+        display: none;
+    }
+
     /* ---------- Logo Styling ---------- */
     .logo-container {
         display: flex;
@@ -195,9 +207,13 @@ st.markdown(
     
     /* ---------- Inputs & Buttons ---------- */
     .stTextInput label, .stSelectbox label {
-        color: #223322 !important;
+        color: #FAF6F0 !important;
         font-weight: 700 !important;
         font-size: 15px !important;
+    }
+    /* حقول الإدخال في الصفحة الرئيسية */
+    .block-container .stTextInput label {
+        color: #223322 !important;
     }
     .stTextInput input, .stSelectbox div[data-baseweb="select"] > div {
         background-color: #FFFFFF !important;
@@ -414,7 +430,6 @@ else:
         if df.empty:
             st.info("لا توجد بيانات.")
         else:
-            # إضافة عمود الفئة للعرض
             display_df = df.copy()
             display_df["Tier"] = display_df["Visits"].apply(lambda v: get_customer_tier(v)[0])
             display_df["Discount"] = display_df["Visits"].apply(lambda v: get_customer_tier(v)[1])
